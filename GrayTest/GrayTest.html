@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<link href="https://fonts.googleapis.com/css?family=Nova+Mono" rel="stylesheet">
+<title>Gray Test</title>
+<style>
+  body { background-color: rgb( 128,128,128 ); }
+  div {
+    font-family:'Nova Mono', Arial, Helvetica, sans-serif; 
+    color: white;
+  }
+  .log { font-size: 30px; }
+  .description { font-size: 15px; }
+</style>
+</head>
+
+<body>
+  <div class="description">
+    <p><strong>Hello, world.</strong></p>
+    <p>Move the mouse vertically to change the gray value of the window.<br>
+Move the mouse up to make the background brighter.<br>
+Move the mouse down to make the background darker.<br>
+Click in the window to lock the color.<br>
+Press the spacebar to toggle the description.  </p>
+  </div>
+  <div class="log">&nbsp;</div>
+</body>
+
+<script>
+  $( document ).ready( function() {
+
+    var isPaused = 0; // toggle flag for locking background brightness
+    var isDisplayed = 1; // toggle flag for displaying the divs
+
+    /* ************************************************
+     * This function uses and event handler to toggle
+     * the visibility of the divs.
+     ************************************************ */
+    $( document ).keypress( function( event ) {
+      if(( event.keyCode == 32 ) && ( isDisplayed == 1 )) {
+        $( "div" ).css( "display", "none" );
+        isDisplayed = 0;
+      }
+      else {
+        $( "div" ).css( "display", "block" );
+        isDisplayed = 1;
+      }
+    });
+    
+    /* ************************************************ 
+     * This function uses an event listener to toggle   
+     * the ability to change the brightness of the      
+     * background.                                      
+     ************************************************ */
+    $( document ).on( "click", function( event ) {
+      var grayLevel = parseInt( 255 - (( event.pageY / $( window ).height() ) * 255 ) );
+      if( isPaused == 0 ) {
+        isPaused = 1;
+        $( ".log" ).text( "Gray Level: " + grayLevel );
+      }
+      else { 
+        isPaused = 0;
+        $( ".log" ).text( "" );
+      }
+    })
+
+    /* ************************************************ 
+     * This function uses an event listener to detect    
+     * the mouse cursor's location in relation to the
+     * browser window.                                      
+     ************************************************ */
+    $( document ).on( "mousemove", function( event ) {
+      var grayLevel = parseInt( 255 - (( event.pageY / $( window ).height() ) * 255 ) );
+      var rgbColorValue = "rgb(" + grayLevel + "," + grayLevel + "," + grayLevel + ")";
+      
+      if ( isPaused == 0 ) {
+        /* *************************************************
+         * This if-else statement switches the font color
+         * of the description and the gray-level log to
+         * white when the background is at a certain
+         * brightness.
+         ************************************************* */
+        if( grayLevel < 172 ) {
+          $( "div" ).css( "color", "white" );
+        }
+        else $( "div" ).css( "color", "black" );
+
+  /*      $( ".log" ).text( grayLevel + " " + rgbColorValue ); */
+        $( ".log" ).text( "Gray Level: " + grayLevel ); 
+        $( "body" ).css( "background-color", rgbColorValue );
+      }
+    });
+  });
+</script>
+</html>
